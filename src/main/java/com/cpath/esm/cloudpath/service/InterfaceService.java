@@ -1,65 +1,42 @@
 package com.cpath.esm.cloudpath.service;
 
-import com.cpath.esm.cloudpath.model.NetworkInterface;
+import com.cpath.esm.cloudpath.model.InterfaceEntity;
+import com.cpath.esm.cloudpath.repository.InterfaceRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.cpath.esm.cloudpath.model.EthernetType.FastEthernet;
+import static com.cpath.esm.cloudpath.model.EthernetType.GigabitEthernet;
 
 @Service
+@RequiredArgsConstructor
 public class InterfaceService {
+    private final InterfaceRepository interfaceRepository;
 
-    // A map to store interfaces by name
-    private final Map<String, NetworkInterface> interfaces = new HashMap<>();
-
-    // Adds a new interface
-    public void addInterface(String interfaceName) {
-        if (interfaces.containsKey(interfaceName)) {
-            System.out.println("Error: Interface " + interfaceName + " already exists.");
-        } else {
-            NetworkInterface newInterface = new NetworkInterface(interfaceName);
-            interfaces.put(interfaceName, newInterface);
-            System.out.println("Interface " + interfaceName + " added successfully.");
+    public List<InterfaceEntity> findInterfaceByEthernetType(String ethernetType) {
+        List<InterfaceEntity> interfaceEntities = new ArrayList<>();
+        if (ethernetType.equals(FastEthernet.toString())) {
+            interfaceEntities = interfaceRepository.findByEthernetType(FastEthernet.toString());
+        } else if (ethernetType.equals(GigabitEthernet.toString())) {
+            interfaceEntities = interfaceRepository.findByEthernetType(GigabitEthernet.toString());
         }
+        return interfaceEntities;
     }
 
-    // Lists all available interfaces
-    public void listInterfaces() {
-        if (interfaces.isEmpty()) {
-            System.out.println("No interfaces found.");
-        } else {
-            System.out.println("Available interfaces:");
-            for (String interfaceName : interfaces.keySet()) {
-                System.out.println(" - " + interfaceName);
-            }
+    public InterfaceEntity findIntByEthernetTypeAndIntNumber(String ethernetType, String interfaceNumber) {
+        var interfaceEntity = new InterfaceEntity();
+        if (ethernetType.equals(FastEthernet.toString())) {
+            interfaceEntity = interfaceRepository.findByEthernetTypeAndInterfaceNumber(FastEthernet.toString(), interfaceNumber);
+        } else if (ethernetType.equals(GigabitEthernet.toString())) {
+            interfaceEntity = interfaceRepository.findByEthernetTypeAndInterfaceNumber(GigabitEthernet.toString(), interfaceNumber);
         }
+        return interfaceEntity;
     }
 
-    // Removes an interface by name
-    public void removeInterface(String interfaceName) {
-        if (interfaces.containsKey(interfaceName)) {
-            interfaces.remove(interfaceName);
-            System.out.println("Interface " + interfaceName + " removed successfully.");
-        } else {
-            System.out.println("Error: Interface " + interfaceName + " does not exist.");
-        }
+    public List<InterfaceEntity> findAll() {
+        return interfaceRepository.findAll();
     }
-
-    // Shows details for a specific interface
-    public void showInterface(String interfaceName) {
-        NetworkInterface networkInterface = interfaces.get(interfaceName);
-        if (networkInterface != null) {
-            System.out.println("Details for interface " + interfaceName + ":");
-            System.out.println(" - Name: " + networkInterface.getName());
-            System.out.println(" - Status: " + (networkInterface.isActive() ? "Active" : "Inactive"));
-        } else {
-            System.out.println("Error: Interface " + interfaceName + " does not exist.");
-        }
-    }
-
-    // Inside InterfaceService.java
-    public Map<String, NetworkInterface> getInterfaces() {
-        return interfaces;
-    }
-
 }

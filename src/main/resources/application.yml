@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: cloud-path
+  # switch-off the Spring Banner
+  main:
+    banner-mode: off
+  shell:
+    interactive:
+      enabled: true
+    history:
+      enabled: false
+  datasource:
+    url: jdbc:postgresql://localhost:5432/cloud-path
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: none
+  h2:
+    console:
+      enabled: true
+
+logging:
+  pattern:
+    console:
